@@ -44,14 +44,14 @@ def send_sns_report(region, sns_topic_arn, unused_volumes, today):
 
     sns = boto3.client('sns', region_name=region)  # Cria um cliente boto3 para o serviço SNS na região especificada.
 
-    ebs_report = f"The Following EBS Volumes are Unused ({today}):\n"  # Cria um cabeçalho do relatório com a data.
+    ebs_report = f"Volumes EBS não utilizados ({today}):\n"  # Cria um cabeçalho do relatório com a data.
     for vol in unused_volumes:
         ebs_report += f"- {vol.id} - Size: {vol.size} - Created: {vol.create_time.strftime('%Y/%m/%d %H:%M')}\n"  # Adiciona informações de cada volume ao relatório.
 
     response = sns.publish(
         TargetArn=sns_topic_arn,
         Message=ebs_report,
-        Subject=f'Unused EBS Volumes Report: {today}',
+        Subject=f'Relatório de volumes EBS não utilizados: {today}',
         MessageStructure='string'
     )  # Publica o relatório no tópico SNS especificado.
 

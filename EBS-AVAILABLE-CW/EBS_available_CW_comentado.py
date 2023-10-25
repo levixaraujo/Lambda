@@ -33,10 +33,10 @@ def lambda_handler(event, context):
 
     unused_volumes = get_unused_ebs_volumes(region)  # Obtém volumes não utilizados na região.
     if unused_volumes:
-        print(f'[ALERT] VOLUMES AVALIABLES') 
+        print(f'[ALERT] VOLUMES AVALIABLE') 
         print(unused_volumes)
     else:
-        print(f'Nenhum volume está disponível')
+        print(f'NO VOLUMES ARE AVAILABLE')
         
 
     return  # Retorna o resultado da função Lambda.
