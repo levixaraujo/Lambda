@@ -16,12 +16,21 @@ def get_aws_region():
         logging.error("Variável de ambiente 'AWS_REGION' não está configurada.")
         return None
 
+# Função para validar quais EBS entrarão na validação de AVAILABLE
+def has_ebs_validator_available_tag(volume):
+    if volume.tags is None:
+        return False
+    
+    for tag in volume.tags:
+        if tag['Key'].upper() == 'EBSVALIDATORAVAILABLE' and tag['Value'].upper() == 'FALSE':
+            return True
+    return False
 
 # Função para obter volumes EBS não utilizados em uma região AWS específica.
 def get_unused_ebs_volumes(region):
     ec2 = boto3.resource('ec2', region_name=region)  # Cria um cliente boto3 para o serviço EC2 na região especificada.
     volumes = ec2.volumes.all()  # Obtém uma lista de todos os volumes EBS na região.
-    unused_volumes = [vol for vol in volumes if vol.state == "available"]  # Filtra apenas os volumes em estado "available".
+    unused_volumes = [vol for vol in volumes if vol.state == "available" and not has_ebs_validator_available_tag(vol)]  # Filtra apenas os volumes em estado "available" e que não tem a tag EBSVALIDATORAVAILABLE=FALSE.
     return unused_volumes  # Retorna a lista de volumes não utilizados.
 
 # Função principal para AWS Lambda que orquestra o processo.
